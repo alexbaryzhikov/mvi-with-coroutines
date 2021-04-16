@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MVI with Coroutines</string>
+    <string name="state_loading">Loading…</string>
+    <string name="city_input_label">Enter city name:</string>
+</resources>
