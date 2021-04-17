@@ -1,4 +1,4 @@
-package ru.alexb.mviwithcoroutines.data
+package ru.alexb.mviwithcoroutines.cities
 
 import kotlinx.coroutines.delay
 import java.util.concurrent.ThreadLocalRandom
@@ -9,7 +9,7 @@ class GetCitiesInteractor @Inject constructor() {
   suspend fun execute(prefix: String): List<CityDto> {
     delay(500)
     when (ThreadLocalRandom.current().nextInt(0, 100)) {
-      in 0..95 -> return cities
+      in 0..90 -> return cities
         .filter { it.startsWith(prefix, ignoreCase = true) }
         .map { CityDto(it) }
       else -> throw RuntimeException("Not this time")

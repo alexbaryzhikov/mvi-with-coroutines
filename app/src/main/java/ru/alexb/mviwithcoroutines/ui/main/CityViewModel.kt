@@ -1,7 +1,7 @@
 package ru.alexb.mviwithcoroutines.ui.main
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.alexb.mviwithcoroutines.data.GetCitiesInteractor
+import ru.alexb.mviwithcoroutines.cities.GetCitiesInteractor
 import ru.alexb.mviwithcoroutines.mvi.MviViewModel
 import javax.inject.Inject
 

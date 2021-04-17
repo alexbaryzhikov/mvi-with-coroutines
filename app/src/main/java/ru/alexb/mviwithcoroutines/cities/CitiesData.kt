@@ -1,4 +1,4 @@
-package ru.alexb.mviwithcoroutines.data
+package ru.alexb.mviwithcoroutines.cities
 
 val cities: Set<String> = """
   Abbeville
