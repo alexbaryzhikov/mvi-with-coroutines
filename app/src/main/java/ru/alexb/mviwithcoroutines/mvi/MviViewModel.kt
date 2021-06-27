@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 
-abstract class MviViewModel<S : State, I : MviIntent, R : ReduceAction>(initialState: S) : ViewModel() {
+abstract class MviViewModel<S : MviState, I : MviIntent, R : MviReduceAction>(initialState: S) : ViewModel() {
   private val stateFlow = MutableStateFlow(initialState)
   val state: StateFlow<S> = stateFlow.asStateFlow()
   private val intentFlow = MutableSharedFlow<I>(extraBufferCapacity = FLOW_BUFFER_CAPACITY)
@@ -24,11 +24,11 @@ abstract class MviViewModel<S : State, I : MviIntent, R : ReduceAction>(initialS
     intentFlow.tryEmit(mviIntent)
   }
 
+  protected abstract suspend fun executeIntent(mviIntent: I)
+
   protected fun handle(reduceAction: R) {
     reduceFlow.tryEmit(reduceAction)
   }
-
-  protected abstract suspend fun executeIntent(mviIntent: I)
 
   protected abstract fun reduce(state: S, reduceAction: R): S
 

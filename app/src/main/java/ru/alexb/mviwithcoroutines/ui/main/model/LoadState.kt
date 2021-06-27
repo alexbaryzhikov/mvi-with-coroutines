@@ -1,4 +1,4 @@
-package ru.alexb.mviwithcoroutines.ui.main
+package ru.alexb.mviwithcoroutines.ui.main.model
 
 enum class LoadState {
   IDLE,

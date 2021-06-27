@@ -1,40 +1,38 @@
-package ru.alexb.mviwithcoroutines.ui.main
+package ru.alexb.mviwithcoroutines.ui.main.mvi
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.alexb.mviwithcoroutines.cities.GetCitiesInteractor
+import ru.alexb.mviwithcoroutines.cities.CitiesProvider
 import ru.alexb.mviwithcoroutines.mvi.MviViewModel
+import ru.alexb.mviwithcoroutines.ui.main.model.CityModelMapper
+import ru.alexb.mviwithcoroutines.ui.main.model.LoadState
 import javax.inject.Inject
 
 @HiltViewModel
 class CityViewModel @Inject constructor(
-  private val getCitiesInteractor: GetCitiesInteractor,
-) : MviViewModel<CityState, CityMviIntent, CityReduceAction>(
-  initialState = CityState.initial
+  private val citiesProvider: CitiesProvider,
+  private val cityModelMapper: CityModelMapper
+) : MviViewModel<CityState, CityIntent, CityReduceAction>(
+  initialState = CityState.INITIAL
 ) {
 
   /* handles Intents from the View */
-  override suspend fun executeIntent(mviIntent: CityMviIntent) {
-    when (mviIntent) {
-      is CityMviIntent.PrefixUpdated -> {
-        if (mviIntent.prefix.length >= MIN_CITY_LENGTH_FOR_SEARCH) {
+  override suspend fun executeIntent(intent: CityIntent) {
+    when (intent) {
+      is CityIntent.PrefixUpdated -> {
+        if (intent.prefix.length >= MIN_CITY_LENGTH_FOR_SEARCH) {
           handle(CityReduceAction.Loading)
-          runCatching { getCitiesInteractor.execute(mviIntent.prefix) }.fold(
-            onSuccess = { response ->
-              handle(
-                CityReduceAction.Loaded(
-                  cities = response.map { city -> city.toCityResultModel() }
-                )
-              )
-            },
-            onFailure = {
-              handle(CityReduceAction.LoadError("Failed to load cities"))
-            }
-          )
+          loadCities(intent.prefix)
         } else {
           handle(CityReduceAction.Loaded(emptyList()))
         }
       }
     }
+  }
+
+  private suspend fun loadCities(prefix: String) {
+    runCatching { citiesProvider.getCities(prefix) }
+      .onSuccess { response -> handle(CityReduceAction.Loaded(response.map(cityModelMapper::mapFrom))) }
+      .onFailure { error -> handle(CityReduceAction.LoadError("Failed to load cities: $error")) }
   }
 
   /* creates a new state as a result of actions distilled from Intents */
@@ -56,6 +54,6 @@ class CityViewModel @Inject constructor(
     }
 
   companion object {
-    private const val MIN_CITY_LENGTH_FOR_SEARCH = 1
+    private const val MIN_CITY_LENGTH_FOR_SEARCH = 2
   }
 }

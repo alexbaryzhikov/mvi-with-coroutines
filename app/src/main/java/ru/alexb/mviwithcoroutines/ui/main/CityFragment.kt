@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.alexb.mviwithcoroutines.R
 import ru.alexb.mviwithcoroutines.databinding.CityFragmentBinding
+import ru.alexb.mviwithcoroutines.ui.main.model.LoadState
+import ru.alexb.mviwithcoroutines.ui.main.mvi.CityIntent
+import ru.alexb.mviwithcoroutines.ui.main.mvi.CityState
+import ru.alexb.mviwithcoroutines.ui.main.mvi.CityViewModel
 
 @AndroidEntryPoint
 class CityFragment : Fragment() {
@@ -39,7 +43,7 @@ class CityFragment : Fragment() {
       .launchIn(lifecycleScope)
 
     binding!!.input.doAfterTextChanged { prefix ->
-      viewModel.onIntent(CityMviIntent.PrefixUpdated(prefix.toString()))
+      viewModel.onIntent(CityIntent.PrefixUpdated(prefix.toString()))
     }
   }
 
